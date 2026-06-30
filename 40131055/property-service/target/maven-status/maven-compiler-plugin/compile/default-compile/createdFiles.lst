@@ -1,0 +1,6 @@
+edu/university/s40131055/property/dto/PropertyDTO.class
+edu/university/s40131055/property/PropertyServiceApplication.class
+edu/university/s40131055/property/service/PropertyService.class
+edu/university/s40131055/property/repository/PropertyRepository.class
+edu/university/s40131055/property/controller/PropertyController.class
+edu/university/s40131055/property/model/Property.class
