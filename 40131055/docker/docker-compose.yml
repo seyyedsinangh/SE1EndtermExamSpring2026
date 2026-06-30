@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  # Individual services can be added here for local orchestration
+  placeholder:
+    image: alpine:latest
+    command: ["sh", "-c", "echo 'Start services separately' && sleep 3600"]
