@@ -1,0 +1,36 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker images for all microservices
+        run: |
+          services=(
+            api-gateway
+            auth-service
+            user-service
+            property-service
+            reservation-service
+            payment-service
+            review-service
+            recommendation-service
+            notification-service
+          )
+
+          for service in "${services[@]}"; do
+            echo "Building $service"
+            docker build -t "$service" "40131055/$service"
+          done
