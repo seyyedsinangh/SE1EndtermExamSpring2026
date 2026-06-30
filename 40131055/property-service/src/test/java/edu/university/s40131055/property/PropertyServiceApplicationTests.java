@@ -1,7 +1,15 @@
 package edu.university.s40131055.property;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import edu.university.s40131055.property.service.PropertyService;
+import org.junit.jupiter.api.Test;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class PropertyServiceApplicationTests {
+
+    @Test
+    void serviceCanBeInstantiated() {
+        PropertyService service = new PropertyService();
+        assertNotNull(service);
+    }
 }

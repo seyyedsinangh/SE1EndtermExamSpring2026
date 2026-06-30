@@ -1,7 +1,13 @@
 package edu.university.s40131055.payment;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class PaymentServiceApplicationTests {
+
+    @Test
+    void placeholderTest() {
+        assertTrue(true);
+    }
 }

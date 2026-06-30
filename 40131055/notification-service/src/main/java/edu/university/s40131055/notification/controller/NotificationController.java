@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notifications")
 public class NotificationController {
     @PostMapping
-    public ResponseEntity<String> notifyAll() {
+    public ResponseEntity<String> sendNotification() {
         return null;
     }
 }
