@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - test
+  pull_request:
+    branches:
+      - test
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build all Maven microservices
+        run: |
+          find . -name pom.xml | while read -r pom; do
+            dir=$(dirname "$pom")
+            echo "Building $dir"
+            mvn -f "$pom" -B -DskipTests package
+          done
+
+      - name: Run all JUnit tests with JaCoCo
+        run: |
+          find . -name pom.xml | while read -r pom; do
+            dir=$(dirname "$pom")
+            echo "Testing $dir"
+            mvn -f "$pom" -B test jacoco:report
+          done
+
+      - name: Generate CSV coverage report
+        run: |
+          python3 - <<'PY'
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+root = Path('.')
+rows = []
+for pom in root.rglob('pom.xml'):
+    module_dir = pom.parent
+    jacoco_xml = module_dir / 'target' / 'site' / 'jacoco' / 'jacoco.xml'
+    if jacoco_xml.exists():
+        tree = ET.parse(jacoco_xml)
+        report = tree.getroot()
+        counter = report.find('.//counter[@type="LINE"]')
+        if counter is not None:
+            missed = int(counter.attrib.get('missed', 0))
+            covered = int(counter.attrib.get('covered', 0))
+            total = covered + missed
+            pct = 0.0 if total == 0 else round((covered / total) * 100, 2)
+            rows.append((module_dir.name, covered, missed, total, pct))
+
+out_file = root / 'coverage-report.csv'
+with out_file.open('w', encoding='utf-8') as f:
+    f.write('module,covered,missed,total,coverage_percent\n')
+    for row in rows:
+        f.write(f'{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\n')
+print(f'Wrote {out_file}')
+PY
+
+      - name: Upload coverage CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-csv
+          path: coverage-report.csv
