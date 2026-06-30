@@ -36,7 +36,7 @@ jobs:
           find . -name pom.xml | while read -r pom; do
             dir=$(dirname "$pom")
             echo "Testing $dir"
-            mvn -f "$pom" -B test jacoco:report
+            mvn -f "$pom" -B test org.jacoco:jacoco-maven-plugin:0.8.12:prepare-agent org.jacoco:jacoco-maven-plugin:0.8.12:report
           done
 
       - name: Generate CSV coverage report
