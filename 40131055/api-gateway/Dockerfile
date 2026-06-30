@@ -1,7 +1,11 @@
-FROM eclipse-temurin:21-jdk-jammy
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+WORKDIR /workspace
+COPY pom.xml ./
+COPY src ./src
+RUN mvn -q -DskipTests package
+
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY . /app
-RUN chmod +x mvnw || true
-RUN ./mvnw -q -DskipTests package || mvn -q -DskipTests package
+COPY --from=build /workspace/target/*.jar /app/app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "target/*.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
